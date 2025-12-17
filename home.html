@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PG Finder — Rooms</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="top-left">
+      <h2>Available PG Rooms</h2>
+      <p class="muted">Book a PG near GIT College</p>
+    </div>
+
+    <div class="top-right">
+      <div id="notifBell" class="bell">
+        🔔 <span id="notifCount" class="badge hidden">0</span>
+      </div>
+      <button id="logoutBtn" class="btn ghost">Logout</button>
+    </div>
+  </header>
+
+  <section class="controls">
+    <select id="genderFilter" class="form-control small">
+      <option value="all">All</option>
+      <option value="boys">Boys</option>
+      <option value="girls">Girls</option>
+      <option value="coed">Co-ed</option>
+    </select>
+
+    <input id="search" class="form-control" type="search" placeholder="Search PG, amenities..." />
+
+    <select id="sortBy" class="form-control small">
+      <option value="relevance">Sort by</option>
+      <option value="price-asc">Price: Low → High</option>
+      <option value="price-desc">Price: High → Low</option>
+    </select>
+  </section>
+
+  <main id="roomsContainer" class="grid"></main>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

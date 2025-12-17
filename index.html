@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PG Finder — Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="page-center">
+    <div class="glass-card login-card">
+      <h1 class="brand">PG Finder</h1>
+      <p class="lead">Find your room near GIT College</p>
+
+      <label>Login as</label>
+      <select id="roleSelect" class="form-control">
+        <option value="tenant">Tenant / Student</option>
+        <option value="owner">PG Owner</option>
+      </select>
+
+      <input id="email" class="form-control" type="email" placeholder="Email" />
+      <input id="password" class="form-control" type="password" placeholder="Password" />
+
+      <div id="loginError" class="error" aria-live="polite"></div>
+
+      <button id="loginBtn" class="btn primary">Sign In</button>
+
+      <div class="demo-note">
+        Tenant demo: <strong>ira@example.com / 1234</strong><br/>
+        Owner demo: <strong>owner@example.com / owner123</strong>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Demo credentials
+    const DEMO_TENANT = { email: 'ira@example.com', password: '1234' };
+    const DEMO_OWNER = { email: 'owner@example.com', password: 'owner123' };
+
+    const loginBtn = document.getElementById('loginBtn');
+    const errEl = document.getElementById('loginError');
+
+    loginBtn.addEventListener('click', () => {
+      errEl.textContent = '';
+      const role = document.getElementById('roleSelect').value;
+      const email = document.getElementById('email').value.trim();
+      const pass = document.getElementById('password').value.trim();
+
+      if (!email || !pass) {
+        errEl.textContent = 'Please fill email and password.';
+        return;
+      }
+
+      if (role === 'tenant') {
+        if (email === DEMO_TENANT.email && pass === DEMO_TENANT.password) {
+          sessionStorage.setItem('pg_user', JSON.stringify({ role: 'tenant', email }));
+          window.location.href = 'home.html';
+          return;
+        } else {
+          errEl.textContent = 'Invalid tenant credentials.';
+          return;
+        }
+      }
+
+      if (role === 'owner') {
+        if (email === DEMO_OWNER.email && pass === DEMO_OWNER.password) {
+          sessionStorage.setItem('pg_user', JSON.stringify({ role: 'owner', email }));
+          window.location.href = 'owner.html';
+          return;
+        } else {
+          errEl.textContent = 'Invalid owner credentials.';
+          return;
+        }
+      }
+    });
+
+    // Optional: press Enter to login
+    [document.getElementById('email'), document.getElementById('password')].forEach(inp=>{
+      inp.addEventListener('keypress', (e)=>{ if(e.key === 'Enter') loginBtn.click(); });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PG Finder — Owner</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="top-left">
+      <h2>Owner Dashboard</h2>
+      <p class="muted">Manage booking requests</p>
+    </div>
+
+    <div class="top-right">
+      <a href="index.html" class="btn ghost">Logout</a>
+    </div>
+  </header>
+
+  <main class="owner-main">
+    <section class="owner-panel glass-card">
+      <h3>Booking Requests</h3>
+      <div id="bookingsList" class="bookings-list">Loading…</div>
+      <div style="margin-top:12px;">
+        <button id="clearBookings" class="btn warn">Clear All Bookings</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="owner.js"></script>
+</body>
+</html>
+

@@ -1,83 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PG Finder — Login</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PG Finder — Login / Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="page-center">
-    <div class="glass-card login-card">
-      <h1 class="brand">PG Finder</h1>
-      <p class="lead">Find your room near GIT College</p>
 
-      <label>Login as</label>
-      <select id="roleSelect" class="form-control">
-        <option value="tenant">Tenant / Student</option>
-        <option value="owner">PG Owner</option>
-      </select>
+  <input id="themeToggle" class="theme-toggle-input" type="checkbox" aria-label="Toggle color theme">
 
-      <input id="email" class="form-control" type="email" placeholder="Email" />
-      <input id="password" class="form-control" type="password" placeholder="Password" />
+  <div class="app">
 
-      <div id="loginError" class="error" aria-live="polite"></div>
+  <header class="topbar">
+    <div class="brand">PG Finder</div>
+    <nav class="top-actions">
+      <button class="btn btn-outline-yellow" onclick="location.href='home.html'">Explore</button>
+      <label for="themeToggle" class="theme-switch" title="Toggle theme" aria-hidden="false">
+        <span class="moon">🌙</span>
+        <span class="sun">☀️</span>
+        <span class="switch-knob"></span>
+      </label>
+    </nav>
+  </header>
 
-      <button id="loginBtn" class="btn primary">Sign In</button>
+  <main class="center-wrap">
+  <section class="login-card" aria-labelledby="loginTitle">
+    <h1 id="loginTitle">Welcome</h1>
+    <p class="lead">Find or list paying-guest homes easily.</p>
 
-      <div class="demo-note">
-        Tenant demo: <strong>ira@example.com / 1234</strong><br/>
-        Owner demo: <strong>owner@example.com / owner123</strong>
-      </div>
+    <label class="label">You are</label>
+    <div class="segmented" role="radiogroup" aria-label="Choose role">
+      <label class="seg" for="r-tenant"><input id="r-tenant" name="roleRadio" type="radio" value="tenant" checked onchange="document.getElementById('role').value='tenant'"> <span class="dot"></span> Tenant</label>
+      <label class="seg" for="r-owner"><input id="r-owner" name="roleRadio" type="radio" value="owner" onchange="document.getElementById('role').value='owner'"> <span class="dot"></span> Owner</label>
     </div>
+    <select id="role" hidden>
+      <option value="tenant">Tenant</option>
+      <option value="owner">Owner</option>
+    </select>
+
+    <label class="label" for="email">Email</label>
+    <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
+
+    <label class="label" for="password">Password</label>
+    <div class="password-wrap">
+      <input type="password" id="password" placeholder="Enter password" autocomplete="current-password">
+      <button class="icon-btn" id="togglePwd" type="button" aria-label="Show password" aria-pressed="false" onclick="togglePassword()">👁️</button>
+    </div>
+
+    <div class="actions-row">
+      <button class="btn btn-yellow" onclick="login()">Login</button>
+      <button class="btn btn-outline-yellow" onclick="registerUser()">Register</button>
+    </div>
+
+    <div class="meta-row">
+      <button class="btn btn-ghost" onclick="resetData()">Reset Data</button>
+      <small id="storageStatus" class="status">Users: 0 · Logged: -</small>
+    </div>
+
+    <div class="users-list" id="usersList" aria-live="polite"></div>
+
+    <p class="tip">Tip: register as owner to access owner dashboard.</p>
+  </section>
   </main>
 
-  <script>
-    // Demo credentials
-    const DEMO_TENANT = { email: 'ira@example.com', password: '1234' };
-    const DEMO_OWNER = { email: 'owner@example.com', password: 'owner123' };
+  </div><!-- /.app -->
 
-    const loginBtn = document.getElementById('loginBtn');
-    const errEl = document.getElementById('loginError');
+ <script>
+function registerUser(){
+  const role = document.getElementById("role").value;
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const password = document.getElementById("password").value;
 
-    loginBtn.addEventListener('click', () => {
-      errEl.textContent = '';
-      const role = document.getElementById('roleSelect').value;
-      const email = document.getElementById('email').value.trim();
-      const pass = document.getElementById('password').value.trim();
+  if(!email || !password){
+    alert("Please fill all fields");
+    return;
+  }
 
-      if (!email || !pass) {
-        errEl.textContent = 'Please fill email and password.';
-        return;
-      }
+  const users = JSON.parse(localStorage.getItem("users") || "{}");
 
-      if (role === 'tenant') {
-        if (email === DEMO_TENANT.email && pass === DEMO_TENANT.password) {
-          sessionStorage.setItem('pg_user', JSON.stringify({ role: 'tenant', email }));
-          window.location.href = 'home.html';
-          return;
-        } else {
-          errEl.textContent = 'Invalid tenant credentials.';
-          return;
-        }
-      }
+  if(users[email]){
+    alert("User already exists. Please login.");
+    return;
+  }
 
-      if (role === 'owner') {
-        if (email === DEMO_OWNER.email && pass === DEMO_OWNER.password) {
-          sessionStorage.setItem('pg_user', JSON.stringify({ role: 'owner', email }));
-          window.location.href = 'owner.html';
-          return;
-        } else {
-          errEl.textContent = 'Invalid owner credentials.';
-          return;
-        }
-      }
-    });
+  users[email] = { password, role };
+  localStorage.setItem("users", JSON.stringify(users));
 
-    // Optional: press Enter to login
-    [document.getElementById('email'), document.getElementById('password')].forEach(inp=>{
-      inp.addEventListener('keypress', (e)=>{ if(e.key === 'Enter') loginBtn.click(); });
-    });
-  </script>
+  // ✅ SAVE SESSION
+  localStorage.setItem("pg_user", JSON.stringify({ email, role }));
+
+  alert("Registered successfully!");
+
+  if(role === "owner"){
+    window.location.href = "owner.html";
+  } else {
+    window.location.href = "home.html";
+  }
+}
+
+function login(){
+  const roleSelected = document.getElementById("role").value;
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const password = document.getElementById("password").value;
+
+  if(!email || !password){
+    alert("Please fill all fields");
+    return;
+  }
+
+  const users = JSON.parse(localStorage.getItem("users") || "{}");
+  const user = users[email];
+
+  if(!user || user.password !== password){
+    alert("Invalid credentials");
+    return;
+  }
+
+  // ✅ ALWAYS TRUST STORED ROLE
+  const role = user.role;
+
+  localStorage.setItem("pg_user", JSON.stringify({ email, role }));
+
+  if(role === "owner"){
+    window.location.href = "owner.html";
+  } else {
+    window.location.href = "home.html";
+  }
+}
+</script>
+
+
+<script src="script.js"></script>
+
+
 </body>
 </html>

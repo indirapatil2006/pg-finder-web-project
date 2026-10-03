@@ -1,34 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PG Finder — Owner</title>
+  <meta charset="UTF-8" />
+  <title>Owner Dashboard | PG Finder</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <header class="topbar">
-    <div class="top-left">
-      <h2>Owner Dashboard</h2>
-      <p class="muted">Manage booking requests</p>
-    </div>
+<body class="glass-bg">
 
-    <div class="top-right">
-      <a href="index.html" class="btn ghost">Logout</a>
-    </div>
-  </header>
+  <div class="dashboard glass-card">
 
-  <main class="owner-main">
-    <section class="owner-panel glass-card">
-      <h3>Booking Requests</h3>
-      <div id="bookingsList" class="bookings-list">Loading…</div>
-      <div style="margin-top:12px;">
-        <button id="clearBookings" class="btn warn">Clear All Bookings</button>
+    <header class="dashboard-header">
+      <h2>🏠 Owner Dashboard</h2>
+      <button class="btn danger" onclick="logout()">Logout</button>
+    </header>
+
+    <section class="welcome glass-inner">
+      <h3>Welcome, Owner 👋</h3>
+      <p>Manage bookings, verify tenants and create contracts.</p>
+    </section>
+
+    <!-- BOOKING REQUESTS -->
+    <section class="glass-inner">
+      <h3>📩 Booking Requests</h3>
+
+      <div class="booking-card">
+        <p><b>Tenant:</b> ira123@gmail.com</p>
+        <p><b>PG:</b> CozyHives PG</p>
+
+        <p class="status">
+          Booking: <span id="bookingStatus">Pending</span> |
+          Verification: <span id="verifyStatus">Not Verified</span> |
+          Contract: <span id="contractStatus">Not Created</span>
+        </p>
+
+        <div class="actions">
+          <button class="btn success" onclick="acceptBooking()">Accept</button>
+          <button class="btn danger" onclick="rejectBooking()">Reject</button>
+          <button class="btn info" onclick="verifyTenant()">Verify Tenant</button>
+          <button class="btn primary" onclick="createContract()">Create Contract</button>
+        </div>
       </div>
     </section>
-  </main>
+
+    <footer>
+      PG Finder © 2026
+    </footer>
+
+  </div>
 
   <script src="owner.js"></script>
 </body>
 </html>
-

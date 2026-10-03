@@ -1,93 +1,64 @@
-/* owner.js
-   - verify owner session
-   - render bookings, accept/reject, clear
-*/
-const BOOKING_KEY = 'pg_bookings_v1';
+function logout() {
+  localStorage.removeItem("loggedUser");
+  window.location.href = "index.html";
+}
 
-function loadBookings(){ try { return JSON.parse(localStorage.getItem(BOOKING_KEY) || '[]'); } catch(e){ return []; } }
-function saveBookings(list){ localStorage.setItem(BOOKING_KEY, JSON.stringify(list)); }
+// Accept Booking
+function acceptBooking() {
+  document.getElementById("bookingStatus").innerText = "Accepted";
+  notifyTenant("Your booking has been ACCEPTED by owner.");
+}
 
-// verify owner session
-(function verifyOwner(){
-  const userStr = sessionStorage.getItem('pg_user');
-  if(!userStr){ window.location.href = 'index.html'; return; }
-  const user = JSON.parse(userStr);
-  if(user.role !== 'owner'){ window.location.href = 'index.html'; return; }
-})();
+// Reject Booking
+function rejectBooking() {
+  document.getElementById("bookingStatus").innerText = "Rejected";
+  notifyTenant("Your booking has been REJECTED by owner.");
+}
 
-const listEl = document.getElementById('bookingsList');
-const clearBtn = document.getElementById('clearBookings');
-
-function renderBookings(){
-  const bookings = loadBookings();
-  if(bookings.length === 0){
-    listEl.innerHTML = '<div class="muted">No booking requests yet.</div>';
-    return;
+// OTP Verification (SIMULATED)
+function verifyTenant() {
+  const otp = prompt("Enter OTP sent to tenant:");
+  if (otp === "1234") {
+    document.getElementById("verifyStatus").innerText = "Verified";
+    notifyTenant("Your OTP verification is SUCCESSFUL.");
+  } else {
+    alert("Invalid OTP");
   }
-  listEl.innerHTML = '';
-  // show newest first
-  bookings.slice().reverse().forEach(b=>{
-    const card = document.createElement('div');
-    card.className = 'booking-card';
+}
 
-    const left = document.createElement('div');
-    left.innerHTML = `<strong>${b.roomName}</strong>
-                      <div>Requested by: <strong>${b.tenantName}</strong></div>
-                      <div class="muted">${b.tenantEmail} • ${new Date(b.createdAt).toLocaleString()}</div>`;
+// Create Contract + PDF
+function createContract() {
+  document.getElementById("contractStatus").innerText = "Created";
 
-    const right = document.createElement('div');
-    const badge = document.createElement('span');
-    badge.className = 'badge ' + (b.status === 'pending' ? 'pending' : (b.status === 'accepted' ? 'accepted' : 'rejected'));
-    badge.textContent = b.status;
-    right.appendChild(badge);
+  const contractText = `
+PG RENTAL CONTRACT
 
-    if(b.status === 'pending'){
-      const accept = document.createElement('button');
-      accept.className = 'btn';
-      accept.textContent = 'Accept';
-      accept.style.marginLeft = '8px';
-      accept.addEventListener('click', ()=> updateStatus(b.id, 'accepted'));
+Tenant: ira123@gmail.com
+PG: CozyHives PG
+Rent: ₹4500/month
+Start Date: ${new Date().toDateString()}
 
-      const reject = document.createElement('button');
-      reject.className = 'btn warn';
-      reject.textContent = 'Reject';
-      reject.style.marginLeft = '8px';
-      reject.addEventListener('click', ()=> updateStatus(b.id, 'rejected'));
+Owner Signature: ____________
+Tenant Signature: ____________
+`;
 
-      right.appendChild(accept);
-      right.appendChild(reject);
-    }
+  const blob = new Blob([contractText], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
 
-    card.appendChild(left);
-    card.appendChild(right);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "PG_Contract.pdf";
+  a.click();
 
-    listEl.appendChild(card);
+  notifyTenant("Your rental contract has been created.");
+}
+
+// Notification System (LocalStorage)
+function notifyTenant(message) {
+  let notifications = JSON.parse(localStorage.getItem("tenantNotifications")) || [];
+  notifications.push({
+    message,
+    time: new Date().toLocaleString()
   });
+  localStorage.setItem("tenantNotifications", JSON.stringify(notifications));
 }
-
-function updateStatus(id, newStatus){
-  const bookings = loadBookings();
-  const updated = bookings.map(b => b.id === id ? { ...b, status: newStatus, notified: false } : b);
-  saveBookings(updated);
-  // notify other tabs
-  localStorage.setItem('pg_last_update', Date.now().toString());
-  renderBookings();
-}
-
-// Clear bookings
-clearBtn?.addEventListener('click', ()=>{
-  if(!confirm('Clear all bookings?')) return;
-  localStorage.removeItem(BOOKING_KEY);
-  localStorage.setItem('pg_last_update', Date.now().toString());
-  renderBookings();
-});
-
-// listen for changes from other tabs
-window.addEventListener('storage', (e)=>{
-  if(e.key === BOOKING_KEY || e.key === 'pg_last_update'){
-    renderBookings();
-  }
-});
-
-// initial render
-renderBookings();

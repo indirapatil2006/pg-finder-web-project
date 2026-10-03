@@ -1,47 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PG Finder — Rooms</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>PG Finder</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
 <body>
-  <header class="topbar">
-    <div class="top-left">
-      <h2>Available PG Rooms</h2>
-      <p class="muted">Book a PG near GIT College</p>
-    </div>
 
-    <div class="top-right">
-      <div id="notifBell" class="bell">
-        🔔 <span id="notifCount" class="badge hidden">0</span>
-      </div>
-      <button id="logoutBtn" class="btn ghost">Logout</button>
-    </div>
-  </header>
+  <input id="themeToggle" class="theme-toggle-input" type="checkbox" aria-label="Toggle color theme">
+  <div class="app">
 
-  <section class="controls">
-    <select id="genderFilter" class="form-control small">
-      <option value="all">All</option>
+  <header>
+    <h2>PG Finder</h2>
+    <div style="display:flex;gap:12px;align-items:center">
+      <label for="themeToggle" class="theme-switch-mini" title="Toggle theme">☀️/🌙</label>
+      <select id="sort" onchange="sortPG()">
+      <option value="">Sort Price</option>
+      <option value="low">Low → High</option>
+      <option value="high">High → Low</option>
+    </select>
+    <select id="genderFilter" onchange="renderPGs()">
+      <option value="">All Genders</option>
       <option value="boys">Boys</option>
       <option value="girls">Girls</option>
-      <option value="coed">Co-ed</option>
     </select>
+    <input type="text" id="search" placeholder="Search amenities" onkeyup="renderPGs()">
+    <span id="bell">🔔 <b id="count">0</b></span>
+    <button onclick="logout()">Logout</button>
+  </div>
+</header>
 
-    <input id="search" class="form-control" type="search" placeholder="Search PG, amenities..." />
+<main style="padding:12px">
+  <!-- Top map removed; maps open per-PG when 'View Map' clicked -->
 
-    <select id="sortBy" class="form-control small">
-      <option value="relevance">Sort by</option>
-      <option value="price-asc">Price: Low → High</option>
-      <option value="price-desc">Price: High → Low</option>
-    </select>
-  </section>
+  <div id="pgs" class="grid"></div>
+</main>
 
-  <main id="roomsContainer" class="grid"></main>
+<!-- Booking / OTP modal -->
+<div id="modal" class="modal">
+  <div class="panel">
+    <h3 id="modalTitle">Book PG</h3>
+    <div id="modalBody">
+      <input id="tenantName" placeholder="Enter your name">
+      <input id="phone" placeholder="Enter phone number">
+      <input id="stayDuration" placeholder="Stay duration (e.g. 180 days or 6 months)">
+      <button onclick="sendOtp()">Send OTP</button>
+    </div>
+    <div id="otpRow" style="display:none">
+      <input id="otpInput" placeholder="Enter OTP">
+      <button onclick="confirmOtp()">Confirm</button>
+    </div>
+    <div style="text-align:right;margin-top:8px"><button onclick="closeModal()">Close</button></div>
+  </div>
+</div>
 
-  <div id="toast" class="toast hidden"></div>
+<a class="floating-whatsapp" href="https://wa.me/919999999999?text=Hello%20I%20need%20help%20with%20booking" target="_blank" title="Chat on WhatsApp">💬</a>
 
-  <script src="script.js"></script>
+<!-- Map modal (opened when user clicks View Map on a card) -->
+<div id="mapModal" class="modal">
+  <div class="panel" style="width:720px;max-width:96%">
+    <h3 id="mapTitle">Map</h3>
+    <div style="height:420px">
+      <iframe id="mapFrame" src="" style="width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <div style="text-align:right;margin-top:8px"><button onclick="closeMap()">Close</button></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+  </div><!-- /.app -->
 </body>
 </html>

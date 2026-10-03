@@ -7,11 +7,16 @@
 </head>
 <body class="glass-bg">
 
+  <input id="themeToggle" class="theme-toggle-input" type="checkbox" aria-label="Toggle color theme">
+
   <div class="dashboard glass-card">
 
     <header class="dashboard-header">
       <h2>🏠 Owner Dashboard</h2>
-      <button class="btn danger" onclick="logout()">Logout</button>
+      <div class="top-actions">
+        <label for="themeToggle" class="theme-switch-mini" title="Toggle theme">☀️/🌙</label>
+        <button class="btn danger" onclick="logout()">Logout</button>
+      </div>
     </header>
 
     <section class="welcome glass-inner">

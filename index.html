@@ -68,66 +68,83 @@
   </div><!-- /.app -->
 
  <script>
+function tenantClicked(){
+ const roleSelect = document.getElementById("role");
+ const tenantRadio = document.getElementById("r-tenant");
+ if(roleSelect && tenantRadio) {
+   roleSelect.value = tenantRadio.checked ? "tenant" : "owner";
+ }
+}
+
+function resetData(){
+ localStorage.clear();
+ const status = document.getElementById("storageStatus");
+ if(status) {
+   status.textContent = "Users: 0 · Logged: -";
+ }
+ const usersList = document.getElementById("usersList");
+ if(usersList) {
+   usersList.innerHTML = "";
+ }
+ alert("Data reset successfully.");
+}
+
 function registerUser(){
-  const role = document.getElementById("role").value;
-  const email = document.getElementById("email").value.trim().toLowerCase();
-  const password = document.getElementById("password").value;
+ const role = document.getElementById("role").value;
+ const email = document.getElementById("email").value.trim().toLowerCase();
+ const password = document.getElementById("password").value;
 
-  if(!email || !password){
-    alert("Please fill all fields");
-    return;
+ if(!email || !password){
+   alert("Please fill all fields");
+   return;
   }
 
-  const users = JSON.parse(localStorage.getItem("users") || "{}");
+ const users = JSON.parse(localStorage.getItem("users") || "{}");
 
-  if(users[email]){
-    alert("User already exists. Please login.");
-    return;
-  }
+ if(users[email]){
+   alert("User already exists. Please login.");
+   return;
+ }
 
-  users[email] = { password, role };
-  localStorage.setItem("users", JSON.stringify(users));
+ users[email] = { password, role };
+ localStorage.setItem("users", JSON.stringify(users));
+ localStorage.setItem("pg_user", JSON.stringify({ email, role }));
 
-  // ✅ SAVE SESSION
-  localStorage.setItem("pg_user", JSON.stringify({ email, role }));
+ alert("Registered successfully!");
 
-  alert("Registered successfully!");
-
-  if(role === "owner"){
-    window.location.href = "owner.html";
-  } else {
-    window.location.href = "home.html";
+ if(role === "owner"){
+   window.location.href = "owner.html";
+ } else {
+   window.location.href = "home.html";
   }
 }
 
 function login(){
-  const roleSelected = document.getElementById("role").value;
-  const email = document.getElementById("email").value.trim().toLowerCase();
-  const password = document.getElementById("password").value;
+ const roleSelected = document.getElementById("role").value;
+ const email = document.getElementById("email").value.trim().toLowerCase();
+ const password = document.getElementById("password").value;
 
-  if(!email || !password){
-    alert("Please fill all fields");
-    return;
+ if(!email || !password){
+   alert("Please fill all fields");
+   return;
   }
 
-  const users = JSON.parse(localStorage.getItem("users") || "{}");
-  const user = users[email];
+ const users = JSON.parse(localStorage.getItem("users") || "{}");
+ const user = users[email];
 
-  if(!user || user.password !== password){
-    alert("Invalid credentials");
-    return;
-  }
+ if(!user || user.password !== password){
+   alert("Invalid credentials");
+   return;
+ }
 
-  // ✅ ALWAYS TRUST STORED ROLE
-  const role = user.role;
+ const role = user.role || roleSelected;
+ localStorage.setItem("pg_user", JSON.stringify({ email, role }));
 
-  localStorage.setItem("pg_user", JSON.stringify({ email, role }));
-
-  if(role === "owner"){
-    window.location.href = "owner.html";
-  } else {
-    window.location.href = "home.html";
-  }
+ if(role === "owner"){
+   window.location.href = "owner.html";
+ } else {
+   window.location.href = "home.html";
+ }
 }
 </script>
 
